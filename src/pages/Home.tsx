@@ -23,7 +23,7 @@ export function Home({ stats, recentPhotos, isSyncing }: HomeProps) {
   }));
 
   return (
-    <div className="flex flex-col space-y-12 animate-in fade-in duration-700">
+    <div className="flex flex-col gap-12 md:gap-20 animate-in fade-in duration-700">
       {/* Live Photo Wall - First in DOM for correct mobile spacing */}
       <section className="order-1 md:order-2 space-y-6">
         <div className="flex flex-col items-center justify-center text-center">
