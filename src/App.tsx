@@ -6,7 +6,6 @@ import {
   getStats,
   getRecentPhotos,
   registerWeb,
-  getMyPhotos,
   triggerProcessing,
   API_URL,
 } from "@/lib/api";
@@ -14,6 +13,7 @@ import { Navbar } from "@/components/Navbar";
 import { Home } from "@/pages/Home";
 import { MyPhotos } from "@/pages/MyPhotos";
 import { Register } from "@/pages/Register";
+import { About } from "@/pages/About";
 
 function App() {
   const [stats, setStats] = useState<{
@@ -25,10 +25,8 @@ function App() {
   const [recentPhotos, setRecentPhotos] = useState<any[]>([]);
   const [isSyncing, setIsSyncing] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
-  const [isSearching, setIsSearching] = useState(false);
   const [webId, setWebId] = useState("");
   const [searchId, setSearchId] = useState("");
-  const [myPhotos, setMyPhotos] = useState<string[]>([]);
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -42,51 +40,6 @@ function App() {
       setRecentPhotos(recentData);
     } catch (error) {
       console.error("Error fetching initial data:", error);
-    }
-  };
-
-  const handleSearch = async (idToSearch?: string) => {
-    const id = idToSearch || searchId;
-    if (!id) {
-      toast({
-        title: "Registration ID Required",
-        description: "Please enter your Registration ID to search for photos.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    setIsSearching(true);
-    try {
-      const result = await getMyPhotos(id);
-      if (result.error) {
-        toast({
-          title: "Search Error",
-          description: result.error,
-          variant: "destructive",
-        });
-      } else {
-        setMyPhotos(result.photos);
-        if (result.photos.length === 0) {
-          toast({
-            title: "No Photos Found",
-            description: "No photos found yet. We're still processing!",
-          });
-        } else {
-          toast({
-            title: "Photos Found",
-            description: `Successfully found ${result.photos.length} photos in your collection.`,
-          });
-        }
-      }
-    } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to find photos",
-        variant: "destructive",
-      });
-    } finally {
-      setIsSearching(false);
     }
   };
 
@@ -108,7 +61,6 @@ function App() {
           description: `Your ID: ${result.web_id}. We've analyzed your face!`,
         });
         setSearchId(result.web_id);
-        handleSearch(result.web_id);
         navigate("/my-photos");
       }
     } catch (error: any) {
@@ -126,7 +78,6 @@ function App() {
     localStorage.removeItem("pds_web_id");
     setWebId("");
     setSearchId("");
-    setMyPhotos([]);
     toast({
       title: "Session Reset",
       description: "You have been logged out. You can now register a new face.",
@@ -188,7 +139,6 @@ function App() {
     if (savedId) {
       setWebId(savedId);
       setSearchId(savedId);
-      handleSearch(savedId);
     }
 
     return () => {
@@ -216,13 +166,7 @@ function App() {
           <Route
             path="/my-photos"
             element={
-              <MyPhotos
-                onSearch={handleSearch}
-                onReset={resetRegistration}
-                searchId={searchId}
-                photos={myPhotos}
-                isSearching={isSearching}
-              />
+              <MyPhotos onReset={resetRegistration} searchId={searchId} />
             }
           />
           <Route
@@ -236,6 +180,7 @@ function App() {
               />
             }
           />
+          <Route path="/about" element={<About />} />
         </Routes>
       </main>
 

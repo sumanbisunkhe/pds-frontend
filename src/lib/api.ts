@@ -39,3 +39,9 @@ export async function triggerProcessing() {
   if (!response.ok) throw new Error('Failed to trigger processing');
   return response.json();
 }
+
+export async function getAboutDetails() {
+  const response = await fetch(`${API_URL}/api/about`);
+  if (!response.ok) throw new Error('Failed to fetch about details');
+  return response.json();
+}

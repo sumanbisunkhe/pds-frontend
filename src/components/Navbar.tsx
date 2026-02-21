@@ -9,6 +9,7 @@ export function Navbar() {
     { label: "Home", href: "/" },
     { label: "My Photos", href: "/my-photos" },
     { label: "Register", href: "/register" },
+    { label: "About", href: "/about" },
   ];
 
   const logo = (

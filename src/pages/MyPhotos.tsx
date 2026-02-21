@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import { useDocumentTitle } from "@/hooks/use-document-title";
 import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
@@ -30,26 +31,54 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { API_URL } from "@/lib/api";
+import { API_URL, getMyPhotos } from "@/lib/api";
+import { useEffect } from "react";
 
 interface MyPhotosProps {
-  onSearch: (id?: string) => Promise<void>;
   onReset: () => void;
   searchId: string;
-  photos: string[];
-  isSearching: boolean;
 }
 
-export function MyPhotos({
-  onSearch,
-  onReset,
-  searchId,
-  photos,
-  isSearching,
-}: MyPhotosProps) {
+export function MyPhotos({ onReset, searchId }: MyPhotosProps) {
+  useDocumentTitle("My Photos");
   const { toast } = useToast();
+  const [photos, setPhotos] = useState<string[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
   const [isDownloadingAll, setIsDownloadingAll] = useState(false);
   const [selectedPhoto, setSelectedPhoto] = useState<string | null>(null);
+
+  const handleSearch = async (idToSearch?: string) => {
+    const id = idToSearch || searchId;
+    if (!id) return;
+
+    setIsSearching(true);
+    try {
+      const result = await getMyPhotos(id);
+      if (result.error) {
+        toast({
+          title: "Search Error",
+          description: result.error,
+          variant: "destructive",
+        });
+      } else {
+        setPhotos(result.photos);
+      }
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to find photos",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  useEffect(() => {
+    if (searchId) {
+      handleSearch();
+    }
+  }, [searchId]);
   const handleDownload = async (url: string) => {
     try {
       const response = await fetch(url);
@@ -130,7 +159,7 @@ export function MyPhotos({
                       variant="ghost"
                       size="sm"
                       className="flex-grow sm:flex-initial h-10 md:h-9 px-3 text-xs font-bold hover:bg-primary/5 hover:text-primary transition-colors border border-border/50 sm:border-none"
-                      onClick={() => onSearch()}
+                      onClick={() => handleSearch()}
                       disabled={isSearching}
                     >
                       {isSearching ? (

@@ -1,6 +1,7 @@
 import { Camera, Users, Zap, RefreshCw } from "lucide-react";
 import SpotlightCard from "@/components/SpotlightCard";
 import CircularGallery from "@/components/CircularGallery";
+import { useDocumentTitle } from "@/hooks/use-document-title";
 
 interface HomeProps {
   stats: {
@@ -15,6 +16,7 @@ interface HomeProps {
 }
 
 export function Home({ stats, recentPhotos, isSyncing }: HomeProps) {
+  useDocumentTitle("Home");
   const galleryItems = recentPhotos.map((photo) => ({
     image: photo.url,
     text: "",

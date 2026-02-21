@@ -30,6 +30,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { useDocumentTitle } from "@/hooks/use-document-title";
 
 interface RegisterProps {
   onRegister: (file: File) => Promise<void>;
@@ -49,6 +50,9 @@ export function Register({
   const [preview, setPreview] = useState<string | null>(null);
   const [searchParams, setSearchParams] = useSearchParams();
   const activeTab = searchParams.get("tab") === "web" ? "web" : "telegram";
+  useDocumentTitle(
+    activeTab === "web" ? "Web Registration" : "Telegram Registration",
+  );
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleDrag = (e: React.DragEvent) => {
