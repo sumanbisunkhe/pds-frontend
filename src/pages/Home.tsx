@@ -23,9 +23,40 @@ export function Home({ stats, recentPhotos, isSyncing }: HomeProps) {
   }));
 
   return (
-    <div className="space-y-12 animate-in fade-in duration-700">
-      {/* Stats Grid */}
-      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div className="flex flex-col space-y-12 animate-in fade-in duration-700">
+      {/* Live Photo Wall - First in DOM for correct mobile spacing */}
+      <section className="order-1 md:order-2 space-y-6">
+        <div className="flex flex-col items-center justify-center text-center">
+          <div className="space-y-1">
+            <h2 className="text-xl font-black tracking-tight lg:text-xl uppercase font-mono">
+              Live Photo Wall
+            </h2>
+            <p className="text-muted-foreground max-w-xl mx-auto font-serif italic">
+              Recently uploaded and processed event photos
+            </p>
+          </div>
+        </div>
+
+        <div className="h-[300px] w-full rounded-3xl overflow-hidden bg-white !border-none !shadow-none">
+          {recentPhotos.length === 0 ? (
+            <div className="h-full w-full flex flex-col items-center justify-center text-muted-foreground">
+              <Camera className="h-12 w-12 mb-4 opacity-20" />
+              <p>No photos processed yet</p>
+            </div>
+          ) : (
+            <CircularGallery
+              items={galleryItems}
+              bend={3}
+              textColor="#000000"
+              font="bold 16px Figtree"
+              borderRadius={0.05}
+            />
+          )}
+        </div>
+      </section>
+
+      {/* Stats Grid - Second in DOM for correct mobile spacing */}
+      <section className="order-2 md:order-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <SpotlightCard
           className="border-border/50 bg-card shadow-xl backdrop-blur-sm group hover:border-primary/50 transition-all duration-300 p-6"
           spotlightColor="rgba(59, 130, 246, 0.15)"
@@ -104,37 +135,6 @@ export function Home({ stats, recentPhotos, isSyncing }: HomeProps) {
             </p>
           </div>
         </SpotlightCard>
-      </section>
-
-      {/* Live Photo Wall */}
-      <section className="space-y-6">
-        <div className="flex flex-col items-center justify-center text-center">
-          <div className="space-y-1">
-            <h2 className="text-xl font-black tracking-tight lg:text-xl uppercase font-mono">
-              Live Photo Wall
-            </h2>
-            <p className="text-muted-foreground max-w-xl mx-auto font-serif italic">
-              Recently uploaded and processed event photos
-            </p>
-          </div>
-        </div>
-
-        <div className="h-[300px] w-full rounded-3xl overflow-hidden bg-white !border-none !shadow-none">
-          {recentPhotos.length === 0 ? (
-            <div className="h-full w-full flex flex-col items-center justify-center text-muted-foreground">
-              <Camera className="h-12 w-12 mb-4 opacity-20" />
-              <p>No photos processed yet</p>
-            </div>
-          ) : (
-            <CircularGallery
-              items={galleryItems}
-              bend={3}
-              textColor="#000000"
-              font="bold 16px Figtree"
-              borderRadius={0.05}
-            />
-          )}
-        </div>
       </section>
     </div>
   );
