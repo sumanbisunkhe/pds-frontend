@@ -419,6 +419,8 @@ interface AppConfig {
   font?: string;
   scrollSpeed?: number;
   scrollEase?: number;
+  autoRotate?: boolean;
+  autoRotateSpeed?: number;
 }
 
 class App {
@@ -451,6 +453,8 @@ class App {
 
   isDown: boolean = false;
   start: number = 0;
+  autoRotate: boolean;
+  autoRotateSpeed: number;
 
   constructor(
     container: HTMLElement,
@@ -462,12 +466,16 @@ class App {
       font = "bold 30px Figtree",
       scrollSpeed = 2,
       scrollEase = 0.05,
+      autoRotate = false,
+      autoRotateSpeed = 0.5,
     }: AppConfig,
   ) {
     document.documentElement.classList.remove("no-js");
     this.container = container;
     this.scrollSpeed = scrollSpeed;
     this.scroll = { ease: scrollEase, current: 0, target: 0, last: 0 };
+    this.autoRotate = autoRotate;
+    this.autoRotateSpeed = autoRotateSpeed;
     this.onCheckDebounce = debounce(this.onCheck.bind(this), 200);
     this.createRenderer();
     this.createCamera();
@@ -646,6 +654,11 @@ class App {
   }
 
   update() {
+    // Auto-rotate when enabled and user is not interacting
+    if (this.autoRotate && !this.isDown) {
+      this.scroll.target += this.autoRotateSpeed;
+    }
+
     this.scroll.current = lerp(
       this.scroll.current,
       this.scroll.target,
@@ -708,6 +721,8 @@ interface CircularGalleryProps {
   font?: string;
   scrollSpeed?: number;
   scrollEase?: number;
+  autoRotate?: boolean;
+  autoRotateSpeed?: number;
 }
 
 export default function CircularGallery({
@@ -718,6 +733,8 @@ export default function CircularGallery({
   font = "bold 30px Figtree",
   scrollSpeed = 2,
   scrollEase = 0.05,
+  autoRotate = false,
+  autoRotateSpeed = 0.5,
 }: CircularGalleryProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -730,11 +747,13 @@ export default function CircularGallery({
       font,
       scrollSpeed,
       scrollEase,
+      autoRotate,
+      autoRotateSpeed,
     });
     return () => {
       app.destroy();
     };
-  }, [items, bend, textColor, borderRadius, font, scrollSpeed, scrollEase]);
+  }, [items, bend, textColor, borderRadius, font, scrollSpeed, scrollEase, autoRotate, autoRotateSpeed]);
   return (
     <div
       className="w-full h-full overflow-hidden cursor-grab active:cursor-grabbing border-none"

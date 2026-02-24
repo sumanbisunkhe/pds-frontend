@@ -50,6 +50,8 @@ export function Home({ stats, recentPhotos, isSyncing }: HomeProps) {
               textColor="#000000"
               font="bold 16px Figtree"
               borderRadius={0.05}
+              autoRotate={true}
+              autoRotateSpeed={0.3}
             />
           )}
         </div>
